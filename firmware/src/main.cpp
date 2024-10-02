@@ -26,8 +26,9 @@ void setup()
     JAddNumberToObject(req, "inbound", 60 * 6);
     notecard.sendRequest(req);
   }
-  
+
   {
+    // Configure a template for the data
     J *req = notecard.newRequest("note.template");
     JAddStringToObject(req, "file", "data.qo");
     JAddNumberToObject(req, "port", 1);

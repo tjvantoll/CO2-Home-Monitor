@@ -26,6 +26,7 @@ export type Event = {
   file: string;
   body: {
     co2: number;
+    humidity: number;
     temp: number;
     voltage: number;
   };
@@ -51,7 +52,7 @@ export async function fetchDevices(): Promise<Device[]> {
 async function fetchEvents(deviceUID: string): Promise<Event[]> {
   try {
     const data = await eventApi.getProjectEvents(projectUID, {
-      file: "data.qo",
+      files: "data.qo",
       deviceUID: [deviceUID],
       sortBy: "captured",
       sortOrder: "desc",

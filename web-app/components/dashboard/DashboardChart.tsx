@@ -124,10 +124,15 @@ const DashboardChart = ({
           <LineChart
             accessibilityLayer
             data={data}
-            margin={{ left: -20, bottom: -10 }}
+            margin={{ left: -20, bottom: -10, right: 10 }}
           >
             <CartesianGrid vertical={false} />
-            <XAxis dataKey="time" tick={false} />
+            <XAxis
+              dataKey="time"
+              type="number"
+              domain={["dataMin", "dataMax"]}
+              tick={false}
+            />
             <YAxis
               tickLine={false}
               tickMargin={8}

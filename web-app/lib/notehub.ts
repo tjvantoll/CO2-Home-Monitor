@@ -56,6 +56,7 @@ async function fetchEvents(deviceUID: string): Promise<Event[]> {
       deviceUID: [deviceUID],
       sortBy: "captured",
       sortOrder: "desc",
+      pageSize: 24,
     });
     return data.events;
   } catch (error) {

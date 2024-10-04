@@ -19,6 +19,7 @@ import { fetchDevices } from "@/lib/notehub";
 
 export default async function Home() {
   const devices = await fetchDevices();
+
   // Round the temperature and humidity values to two decimal places
   devices.forEach((device) => {
     if (device.events) {

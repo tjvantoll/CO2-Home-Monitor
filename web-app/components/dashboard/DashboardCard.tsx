@@ -1,7 +1,7 @@
 import { LucideIcon } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-export const DashboardCard = ({
+const DashboardCard = ({
   title,
   icon: Icon,
   value,
@@ -20,3 +20,5 @@ export const DashboardCard = ({
     </CardContent>
   </Card>
 );
+
+export default DashboardCard;

@@ -8,7 +8,7 @@ api_key.apiKey = process.env.NOTEHUB_API_KEY;
 const deviceApi = new NotehubJs.DeviceApi();
 const eventApi = new NotehubJs.EventApi();
 
-type Device = {
+export type Device = {
   uid: string;
   serial_number: string;
   provisioned: string;
@@ -18,7 +18,7 @@ type Device = {
   sku: string;
   events?: Event[];
 };
-type Event = {
+export type Event = {
   event: string;
   best_id: string;
   device: string;

@@ -154,12 +154,12 @@ interface CustomTooltipProps extends TooltipProps<ValueType, NameType> {
 }
 
 const CustomTooltip: React.FC<CustomTooltipProps> = ({
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   active,
   payload,
   label,
   type,
 }) => {
-  console.log(type);
   if (!payload || payload.length === 0) return null;
 
   const formatValue = (value: number) => {
@@ -172,7 +172,6 @@ const CustomTooltip: React.FC<CustomTooltipProps> = ({
   return (
     <div className="bg-white p-2 rounded-lg shadow-lg">
       <p className="text-sm font-medium text-gray-900">
-        {/* // make the label and value look good in a tooltip */}
         {new Date(label as number).toLocaleString()}
         <br />
         <b>{formatValue(payload[0].value as number)}</b>

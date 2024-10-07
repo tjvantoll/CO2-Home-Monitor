@@ -1,3 +1,4 @@
+import { Link } from "next-view-transitions";
 import React from "react";
 import {
   BatteryCharging,
@@ -8,7 +9,6 @@ import {
 } from "lucide-react";
 import DashboardCard from "@/components/dashboard/DashboardCard";
 import DashboardCharts from "@/components/dashboard/DashboardChart";
-import { fetchDevice } from "@/lib/notehub";
 import {
   Card,
   CardContent,
@@ -17,7 +17,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import Header from "@/components/Header";
-import { Link } from "next-view-transitions";
+import { fetchDevice } from "@/lib/notehub";
+import { formatDate } from "@/lib/utils";
 
 interface DevicePageProps {
   params: {
@@ -73,7 +74,7 @@ export default async function DevicePage({ params }: DevicePageProps) {
             <br />
             SKU: {device.sku}
             <br />
-            Last Activity: {new Date(device.last_activity).toLocaleString()}
+            Last Activity: {formatDate(device.last_activity)}
           </CardDescription>
         </CardHeader>
         <CardContent>

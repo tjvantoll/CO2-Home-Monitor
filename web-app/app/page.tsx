@@ -1,3 +1,4 @@
+import { Wind, Thermometer, Droplet, BatteryCharging } from "lucide-react";
 import { Link } from "next-view-transitions";
 import React from "react";
 import {
@@ -7,10 +8,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { fetchDevices } from "@/lib/notehub";
-import Header from "@/components/Header";
 import DashboardCard from "@/components/dashboard/DashboardCard";
-import { Wind, Thermometer, Droplet, BatteryCharging } from "lucide-react";
+import Header from "@/components/Header";
+import { fetchDevices } from "@/lib/notehub";
+import { formatDate } from "@/lib/utils";
 
 export default async function Home() {
   const devices = await fetchDevices();
@@ -43,8 +44,7 @@ export default async function Home() {
                     <br />
                     SKU: {device.sku}
                     <br />
-                    Last Activity:{" "}
-                    {new Date(device.last_activity).toLocaleString()}
+                    Last Activity: {formatDate(device.last_activity)}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>

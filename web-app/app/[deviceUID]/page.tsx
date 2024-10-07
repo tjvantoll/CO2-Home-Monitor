@@ -1,5 +1,11 @@
 import React from "react";
-import { BatteryCharging, Droplet, Thermometer, Wind } from "lucide-react";
+import {
+  BatteryCharging,
+  ChevronRight,
+  Droplet,
+  Thermometer,
+  Wind,
+} from "lucide-react";
 import DashboardCard from "@/components/dashboard/DashboardCard";
 import DashboardCharts from "@/components/dashboard/DashboardChart";
 import { fetchDevice } from "@/lib/notehub";
@@ -11,13 +17,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import Header from "@/components/Header";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
+import { Link } from "next-view-transitions";
 
 interface DevicePageProps {
   params: {
@@ -45,19 +45,25 @@ export default async function DevicePage({ params }: DevicePageProps) {
     <div>
       <Header />
 
-      <Breadcrumb className="mx-4 mt-4 text-large">
-        <BreadcrumbList>
-          <BreadcrumbItem>
-            <BreadcrumbLink href="/">Home</BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator />
-          <BreadcrumbItem>
-            <BreadcrumbLink href={`/${device.uid}`}>
-              {device.serial_number}
-            </BreadcrumbLink>
-          </BreadcrumbItem>
-        </BreadcrumbList>
-      </Breadcrumb>
+      <div className="mx-4 mt-4">
+        <nav aria-label="breadcrumb">
+          <ol className="list-none p-0 inline-flex items-center gap-x-2 text-gray-500">
+            <li>
+              <Link href="/" className="hover:underline">
+                Home
+              </Link>
+            </li>
+            <li>
+              <ChevronRight className="w-4 h-4" />
+            </li>
+            <li>
+              <Link href={`/${device.uid}`} className="hover:underline">
+                {device.serial_number}
+              </Link>
+            </li>
+          </ol>
+        </nav>
+      </div>
 
       <Card key={device.uid} className="m-4">
         <CardHeader>

@@ -49,6 +49,17 @@ export async function fetchDevices(): Promise<Device[]> {
   }
 }
 
+export async function fetchDevice(deviceUID: string): Promise<Device | null> {
+  try {
+    const data = await deviceApi.getDevice(projectUID, deviceUID);
+    data.events = await fetchEvents(deviceUID);
+    return data;
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+}
+
 async function fetchEvents(deviceUID: string): Promise<Event[]> {
   try {
     const data = await eventApi.getProjectEvents(projectUID, {

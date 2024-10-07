@@ -39,14 +39,6 @@ void setup()
   uint16_t error;
   char errorMessage[256];
 
-  // Stop potentially previously started measurement
-  error = scd4x.stopPeriodicMeasurement();
-  if (error) {
-    Serial.print("Error trying to execute stopPeriodicMeasurement(): ");
-    errorToString(error, errorMessage, 256);
-    Serial.println(errorMessage);
-  }
-
   uint16_t serial0;
   uint16_t serial1;
   uint16_t serial2;
@@ -58,17 +50,6 @@ void setup()
   } else {
     printSerialNumber(serial0, serial1, serial2);
   }
-
-  // Start Measurement
-  error = scd4x.startPeriodicMeasurement();
-  if (error) {
-    Serial.print("Error trying to execute startPeriodicMeasurement(): ");
-    errorToString(error, errorMessage, 256);
-    Serial.println(errorMessage);
-  }
-
-  Serial.println("Waiting for first measurement... (5 sec)");
-  delay(5000);
 
   {
     // Configure the Notecard
@@ -122,6 +103,17 @@ void loop()
   uint16_t error;
   char errorMessage[256];
 
+  // Start Measurement
+  error = scd4x.startPeriodicMeasurement();
+  if (error) {
+    Serial.print("Error trying to execute startPeriodicMeasurement(): ");
+    errorToString(error, errorMessage, 256);
+    Serial.println(errorMessage);
+  }
+
+  Serial.println("Waiting for first measurement... (5 sec)");
+  delay(5000);
+
   // Read Measurement
   uint16_t co2;
   float temp;
@@ -159,6 +151,13 @@ void loop()
       JAddNumberToObject(body, "voltage", getVoltage());
     }
     notecard.sendRequest(req);
+  }
+
+  error = scd4x.stopPeriodicMeasurement();
+  if (error) {
+    Serial.print("Error trying to execute stopPeriodicMeasurement(): ");
+    errorToString(error, errorMessage, 256);
+    Serial.println(errorMessage);
   }
 
   delay(1000 * 60 * 60);

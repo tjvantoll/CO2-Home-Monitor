@@ -8,14 +8,16 @@
 Notecard notecard;
 SensirionI2CScd4x scd4x;
 
-void printUint16Hex(uint16_t value) {
+void printUint16Hex(uint16_t value)
+{
   Serial.print(value < 4096 ? "0" : "");
   Serial.print(value < 256 ? "0" : "");
   Serial.print(value < 16 ? "0" : "");
   Serial.print(value, HEX);
 }
 
-void printSerialNumber(uint16_t serial0, uint16_t serial1, uint16_t serial2) {
+void printSerialNumber(uint16_t serial0, uint16_t serial1, uint16_t serial2)
+{
   Serial.print("Serial: 0x");
   printUint16Hex(serial0);
   printUint16Hex(serial1);
@@ -23,8 +25,25 @@ void printSerialNumber(uint16_t serial0, uint16_t serial1, uint16_t serial2) {
   Serial.println();
 }
 
+float getVoltage()
+{
+  float voltage;
+  J *req = notecard.newRequest("card.voltage");
+
+  if (J *rsp = notecard.requestAndResponse(req))
+  {
+    voltage = JGetNumber(rsp, "value");
+    notecard.deleteResponse(rsp);
+  }
+  return voltage;
+}
+
 void setup()
 {
+  // Provide visual signal when the Host MCU is powered
+  pinMode(LED_BUILTIN, OUTPUT);
+  digitalWrite(LED_BUILTIN, HIGH);
+
   static const size_t MAX_SERIAL_WAIT_MS = 5000;
   size_t begin_serial_wait_ms = ::millis();
   // Wait for the serial port to become available
@@ -56,8 +75,8 @@ void setup()
     J *req = notecard.newRequest("hub.set");
     JAddStringToObject(req, "product", productUID);
     JAddStringToObject(req, "mode", "periodic");
-    JAddNumberToObject(req, "outbound", 60);
-    JAddNumberToObject(req, "inbound", 60 * 6);
+    JAddStringToObject(req, "voutbound", "usb:1;high:60;normal:120;low:360;dead:0");
+    JAddStringToObject(req, "vinbound", "usb:1;high:1440;normal:1440;low:1440;dead:0");
     notecard.sendRequest(req);
   }
 
@@ -83,25 +102,6 @@ void setup()
     JAddStringToObject(req, "mode", "lipo");
     notecard.sendRequest(req);
   }
-}
-
-float getVoltage()
-{
-  float voltage;
-  J *req = notecard.newRequest("card.voltage");
-
-  if (J *rsp = notecard.requestAndResponse(req))
-  {
-    voltage = JGetNumber(rsp, "value");
-    notecard.deleteResponse(rsp);
-  }
-  return voltage;
-}
-
-void loop()
-{
-  uint16_t error;
-  char errorMessage[256];
 
   // Start Measurement
   error = scd4x.startPeriodicMeasurement();
@@ -159,6 +159,18 @@ void loop()
     errorToString(error, errorMessage, 256);
     Serial.println(errorMessage);
   }
+}
 
-  delay(1000 * 60 * 60);
+void loop()
+{
+  // Request that the Notecard place the host to sleep. Use a "command"
+  // instead of a "request" because the host is going to power down and
+  // cannot receive a response.
+  J *req = notecard.newCommand("card.attn");
+  JAddStringToObject(req, "mode", "sleep");
+  JAddNumberToObject(req, "seconds", 3600);
+  notecard.sendRequest(req);
+
+  // Delay 1 second in case the host fails to sleep and try again
+  delay(1000);
 }

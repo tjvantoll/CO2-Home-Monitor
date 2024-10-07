@@ -16,7 +16,6 @@ import {
   BreadcrumbItem,
   BreadcrumbLink,
   BreadcrumbList,
-  BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 
@@ -74,7 +73,7 @@ export default async function DevicePage({ params }: DevicePageProps) {
         <CardContent>
           {device.events && (
             <>
-              <div className="grid grid-cols-1 gap-4 lg:grid-cols-4 sm:grid-cols-2">
+              <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
                 <DashboardCard
                   title="CO2"
                   icon={Wind}

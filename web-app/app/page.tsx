@@ -13,6 +13,8 @@ import Header from "@/components/Header";
 import { fetchDevices } from "@/lib/notehub";
 import { formatDate } from "@/lib/utils";
 
+export const revalidate = 0;
+
 export default async function Home() {
   const devices = await fetchDevices();
 

@@ -138,19 +138,21 @@ void setup()
     Serial.println(humidity);
   }
 
-  J *req = notecard.newRequest("note.add");
-  if (req != NULL)
   {
-    JAddStringToObject(req, "file", "data.qo");
-    J *body = JAddObjectToObject(req, "body");
-    if (body)
+    J *req = notecard.newRequest("note.add");
+    if (req != NULL)
     {
-      JAddNumberToObject(body, "co2", co2);
-      JAddNumberToObject(body, "temp", temp);
-      JAddNumberToObject(body, "humidity", humidity);
-      JAddNumberToObject(body, "voltage", getVoltage());
+      JAddStringToObject(req, "file", "data.qo");
+      J *body = JAddObjectToObject(req, "body");
+      if (body)
+      {
+        JAddNumberToObject(body, "co2", co2);
+        JAddNumberToObject(body, "temp", temp);
+        JAddNumberToObject(body, "humidity", humidity);
+        JAddNumberToObject(body, "voltage", getVoltage());
+      }
+      notecard.sendRequest(req);
     }
-    notecard.sendRequest(req);
   }
 
   error = scd4x.stopPeriodicMeasurement();

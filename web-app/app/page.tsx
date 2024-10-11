@@ -31,12 +31,9 @@ export default async function Home() {
   return (
     <div>
       <Header />
-      <div className="m-4">
+      <div className="m-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
         {devices.map((device) => (
-          <div
-            key={device.uid}
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4"
-          >
+          <div key={device.uid}>
             <Link href={`/${device.uid}`}>
               <Card>
                 <CardHeader>

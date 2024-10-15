@@ -4,7 +4,9 @@ const Header = () => {
   return (
     <header className="w-full bg-blue-600 p-4 flex justify-between items-center">
       <Link href="/">
-        <h1 className="text-4xl font-bold text-white">CO2 Home Monitor</h1>
+        <h1 className="text-4xl font-bold text-white">
+          CO<sup>2</sup> Home Monitor
+        </h1>
       </Link>
       <a
         href="https://github.com/tjvantoll/CO2-Home-Monitor"

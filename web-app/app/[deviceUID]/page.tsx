@@ -82,7 +82,7 @@ export default async function DevicePage({ params }: DevicePageProps) {
             <>
               <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
                 <DashboardCard
-                  title="CO2"
+                  title="CO²"
                   icon={Wind}
                   value={device.events[0].body.co2}
                 />

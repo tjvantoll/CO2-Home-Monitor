@@ -80,7 +80,7 @@ interface ChartDataPoint {
 }
 
 const getTitle = (type: string) => {
-  if (type === "co2") return "CO2";
+  if (type === "co2") return "CO²";
   if (type === "humidity") return "Humidity";
   if (type === "temp") return "Temperature";
   if (type === "voltage") return "Voltage";

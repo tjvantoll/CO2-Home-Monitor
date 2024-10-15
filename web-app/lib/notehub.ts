@@ -35,12 +35,12 @@ export type Event = {
 export async function fetchDevices(): Promise<Device[]> {
   try {
     const data = await deviceApi.getProjectDevices(projectUID, {});
-    data.devices = await Promise.all(
-      data.devices.map(async (device: Device) => {
-        device.events = await fetchEvents(device.uid);
-        return device;
-      })
-    );
+    const deviceUIDs = data.devices.map((device: Device) => device.uid);
+    const events = await fetchEvents(deviceUIDs);
+
+    data.devices.forEach((device: Device) => {
+      device.events = events.filter((event) => event.device === device.uid);
+    });
 
     return data.devices;
   } catch (error) {
@@ -52,7 +52,7 @@ export async function fetchDevices(): Promise<Device[]> {
 export async function fetchDevice(deviceUID: string): Promise<Device | null> {
   try {
     const data = await deviceApi.getDevice(projectUID, deviceUID);
-    data.events = await fetchEvents(deviceUID);
+    data.events = await fetchEvents([deviceUID]);
     return data;
   } catch (error) {
     console.error(error);
@@ -60,14 +60,14 @@ export async function fetchDevice(deviceUID: string): Promise<Device | null> {
   }
 }
 
-async function fetchEvents(deviceUID: string): Promise<Event[]> {
+async function fetchEvents(deviceUIDs: string[]): Promise<Event[]> {
   try {
     const data = await eventApi.getProjectEvents(projectUID, {
       files: "data.qo",
-      deviceUID: [deviceUID],
+      deviceUID: deviceUIDs,
       sortBy: "captured",
       sortOrder: "desc",
-      pageSize: 24,
+      pageSize: 24 * deviceUIDs.length,
     });
     return data.events;
   } catch (error) {

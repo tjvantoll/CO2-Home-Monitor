@@ -12,11 +12,29 @@ import DashboardCard from "@/components/dashboard/DashboardCard";
 import Header from "@/components/Header";
 import { fetchDevices } from "@/lib/notehub";
 import { formatDate } from "@/lib/utils";
+import DashboardChartAll from "@/components/dashboard/DashboardChartAll";
 
-export const revalidate = 0;
+// The number of seconds to wait before busting the cache and
+// re-fetching the data from the server.
+export const revalidate = 60;
+
+const serialNumberMap: { [key: string]: string } = {};
 
 export default async function Home() {
   const devices = await fetchDevices();
+
+  devices.forEach((device) => {
+    serialNumberMap[device.uid] = device.serial_number;
+  });
+
+  const eventsForChart = devices
+    .map((device) => device.events)
+    .flat()
+    .map((event) => ({
+      device: serialNumberMap[event?.device || ""],
+      value: event?.body.co2 || 0,
+      when: event?.when || 0,
+    }));
 
   // Round the temperature and humidity values to two decimal places
   devices.forEach((device) => {
@@ -50,7 +68,7 @@ export default async function Home() {
                   {device.events && device.events.length > 0 && (
                     <div className="grid gap-4 grid-cols-2 xl:grid-cols-4 md:grid-cols-2 sm:grid-cols-4">
                       <DashboardCard
-                        title="CO2"
+                        title="CO²"
                         icon={Wind}
                         value={device.events[0].body.co2}
                       />
@@ -76,6 +94,12 @@ export default async function Home() {
             </Link>
           </div>
         ))}
+      </div>
+
+      <hr className="my-8 mx-4" />
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-2 gap-4">
+        <DashboardChartAll events={eventsForChart} />
       </div>
     </div>
   );

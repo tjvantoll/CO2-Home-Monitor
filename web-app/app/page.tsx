@@ -16,7 +16,7 @@ import DashboardChartAll from "@/components/dashboard/DashboardChartAll";
 
 // The number of seconds to wait before busting the cache and
 // re-fetching the data from the server.
-export const revalidate = 60;
+export const revalidate = 0;
 
 const serialNumberMap: { [key: string]: string } = {};
 

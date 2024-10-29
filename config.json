@@ -1,0 +1,27 @@
+{
+  "req":"hub.set",
+  "product":"com.blues.tvantoll:co2_home_monitor",
+  "mode":"periodic",
+  "voutbound":"usb:1;high:60;normal:120;low:360;dead:0",
+  "vinbound":"usb:1;high:1440;normal:1440;low:1440;dead:0"
+}
+
+{
+  "req":"note.template",
+  "file":"data.qo",
+  "port":1,
+  "format":"compact",
+  "body":{
+    "co2":12,
+    "temp":14.1,
+    "humidity":14.1,
+    "_time":14,
+    "voltage":14.1
+  }
+}
+
+{
+  "req":"card.voltage",
+  "mode":"lipo"
+  // "mode":"lic"
+}

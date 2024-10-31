@@ -1,9 +1,9 @@
 {
   "req":"hub.set",
-  "product":"com.blues.tvantoll:co2_home_monitor",
+  "product":"YOUR_PRODUCT_UID_HERE",
   "mode":"periodic",
-  "voutbound":"usb:1;high:60;normal:120;low:360;dead:0",
-  "vinbound":"usb:1;high:1440;normal:1440;low:1440;dead:0"
+  "voutbound":"usb:15;high:60;normal:360;low:1440;dead:0",
+  "vinbound":"usb:60;high:1440;normal:1440;low:1440;dead:0"
 }
 
 {

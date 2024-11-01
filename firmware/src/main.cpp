@@ -40,11 +40,11 @@ float getVoltage()
 
 void setup()
 {
-  // Provide visual signal when the Host MCU is powered
-  pinMode(LED_BUILTIN, OUTPUT);
-  digitalWrite(LED_BUILTIN, HIGH);
-
   #if DEVELOPMENT
+    // Provide visual signal when the Host MCU is powered
+    pinMode(LED_BUILTIN, OUTPUT);
+    digitalWrite(LED_BUILTIN, HIGH);
+
     static const size_t MAX_SERIAL_WAIT_MS = 5000;
     size_t begin_serial_wait_ms = ::millis();
     // Wait for the serial port to become available
@@ -55,10 +55,7 @@ void setup()
     Serial.end();
   #endif
 
-  delay(10000);
-
   notecard.begin();
-  Wire.begin();
   scd4x.begin(Wire);
 
   uint16_t error;

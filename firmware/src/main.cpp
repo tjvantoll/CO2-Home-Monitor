@@ -8,16 +8,14 @@
 Notecard notecard;
 SensirionI2CScd4x scd4x;
 
-void printUint16Hex(uint16_t value)
-{
+void printUint16Hex(uint16_t value) {
   Serial.print(value < 4096 ? "0" : "");
   Serial.print(value < 256 ? "0" : "");
   Serial.print(value < 16 ? "0" : "");
   Serial.print(value, HEX);
 }
 
-void printSerialNumber(uint16_t serial0, uint16_t serial1, uint16_t serial2)
-{
+void printSerialNumber(uint16_t serial0, uint16_t serial1, uint16_t serial2) {
   Serial.print("Serial: 0x");
   printUint16Hex(serial0);
   printUint16Hex(serial1);
@@ -25,13 +23,11 @@ void printSerialNumber(uint16_t serial0, uint16_t serial1, uint16_t serial2)
   Serial.println();
 }
 
-float getVoltage()
-{
+float getVoltage() {
   float voltage;
   J *req = notecard.newRequest("card.voltage");
 
-  if (J *rsp = notecard.requestAndResponseWithRetry(req, 5))
-  {
+  if (J *rsp = notecard.requestAndResponseWithRetry(req, 5)) {
     voltage = JGetNumber(rsp, "value");
     notecard.deleteResponse(rsp);
   }
@@ -121,12 +117,10 @@ void setup()
 
   {
     J *req = notecard.newRequest("note.add");
-    if (req != NULL)
-    {
+    if (req != NULL) {
       JAddStringToObject(req, "file", "data.qo");
       J *body = JAddObjectToObject(req, "body");
-      if (body)
-      {
+      if (body) {
         JAddNumberToObject(body, "co2", co2);
         JAddNumberToObject(body, "temp", temp);
         JAddNumberToObject(body, "humidity", humidity);
@@ -152,9 +146,11 @@ void loop()
   // instead of a "request" because the host is going to power down and
   // cannot receive a response.
   J *req = notecard.newCommand("card.attn");
-  JAddStringToObject(req, "mode", "sleep");
-  JAddNumberToObject(req, "seconds", 3600);
-  notecard.sendRequest(req);
+  if (req != NULL) {
+    JAddStringToObject(req, "mode", "sleep");
+    JAddNumberToObject(req, "seconds", 3600);
+    notecard.sendRequest(req);
+  }
 
   // Delay 1 second in case the host fails to sleep and try again
   delay(1000);

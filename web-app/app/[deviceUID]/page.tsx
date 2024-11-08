@@ -28,14 +28,15 @@ interface DevicePageProps {
 
 export default async function DevicePage({ params }: DevicePageProps) {
   const { deviceUID } = params;
-  const device = await fetchDevice(deviceUID);
+  const decodedDeviceUID = decodeURIComponent(deviceUID);
+  const device = await fetchDevice(decodeURIComponent(decodedDeviceUID));
 
   if (!device) {
     return <div>Device not found</div>;
   }
 
   // Round the temperature and humidity values to two decimal places
-  if (device.events) {
+  if (device && device.events) {
     device.events.forEach((event) => {
       event.body.temp = Math.round(event.body.temp * 100) / 100;
       event.body.humidity = Math.round(event.body.humidity * 100) / 100;
@@ -66,62 +67,68 @@ export default async function DevicePage({ params }: DevicePageProps) {
         </nav>
       </div>
 
-      <Card key={device.uid} className="m-4">
-        <CardHeader>
-          <CardTitle>{device.serial_number}</CardTitle>
-          <CardDescription>
-            UID: {device.uid}
-            <br />
-            SKU: {device.sku}
-            <br />
-            Last Activity: {formatDate(device.last_activity)}
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          {device.events && (
-            <>
-              <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-                <DashboardCard
-                  title="CO²"
-                  icon={Wind}
-                  value={device.events[0].body.co2}
-                />
-                <DashboardCard
-                  title="Temperature"
-                  icon={Thermometer}
-                  value={device.events[0].body.temp}
-                />
-                <DashboardCard
-                  title="Humidity"
-                  icon={Droplet}
-                  value={device.events[0].body.humidity}
-                />
-                <DashboardCard
-                  title="Voltage"
-                  icon={BatteryCharging}
-                  value={device.events[0].body.voltage}
-                />
-              </div>
+      {device.events && device.events.length === 0 && (
+        <div className="m-4">No data found for this device.</div>
+      )}
 
-              <hr className="my-8" />
+      {device.events && device.events.length > 0 && (
+        <Card key={device.uid} className="m-4">
+          <CardHeader>
+            <CardTitle>{device.serial_number}</CardTitle>
+            <CardDescription>
+              UID: {device.uid}
+              <br />
+              SKU: {device.sku}
+              <br />
+              Last Activity: {formatDate(device.last_activity)}
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {device.events && (
+              <>
+                <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+                  <DashboardCard
+                    title="CO²"
+                    icon={Wind}
+                    value={device.events[0].body.co2}
+                  />
+                  <DashboardCard
+                    title="Temperature"
+                    icon={Thermometer}
+                    value={device.events[0].body.temp}
+                  />
+                  <DashboardCard
+                    title="Humidity"
+                    icon={Droplet}
+                    value={device.events[0].body.humidity}
+                  />
+                  <DashboardCard
+                    title="Voltage"
+                    icon={BatteryCharging}
+                    value={device.events[0].body.voltage}
+                  />
+                </div>
 
-              <div className="grid grid-cols-1 gap-4 xl:grid-cols-3 sm:grid-cols-2">
-                <DashboardCharts
-                  data={device.events.map((event) => {
-                    return {
-                      co2: event.body.co2,
-                      temp: event.body.temp,
-                      humidity: event.body.humidity,
-                      voltage: event.body.voltage,
-                      when: event.when,
-                    };
-                  })}
-                />
-              </div>
-            </>
-          )}
-        </CardContent>
-      </Card>
+                <hr className="my-8" />
+
+                <div className="grid grid-cols-1 gap-4 xl:grid-cols-3 sm:grid-cols-2">
+                  <DashboardCharts
+                    data={device.events.map((event) => {
+                      return {
+                        co2: event.body.co2,
+                        temp: event.body.temp,
+                        humidity: event.body.humidity,
+                        voltage: event.body.voltage,
+                        when: event.when,
+                      };
+                    })}
+                  />
+                </div>
+              </>
+            )}
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }

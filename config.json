@@ -2,8 +2,10 @@
   "req":"hub.set",
   "product":"YOUR_PRODUCT_UID_HERE",
   "mode":"periodic",
-  "voutbound":"usb:15;high:60;normal:360;low:1440;dead:0",
-  "vinbound":"usb:60;high:1440;normal:1440;low:1440;dead:0"
+  "outbound": 60,
+  "inbound": 1440
+  // "voutbound":"usb:15;high:60;normal:360;low:1440;dead:0",
+  // "vinbound":"usb:60;high:1440;normal:1440;low:1440;dead:0"
 }
 
 {

@@ -1,4 +1,4 @@
-import { Link } from "next-view-transitions";
+import Link from "next/link";
 import React from "react";
 import {
   BatteryCharging,
@@ -21,12 +21,13 @@ import { fetchDevice } from "@/lib/notehub";
 import { formatDate } from "@/lib/utils";
 
 interface DevicePageProps {
-  params: {
+  params: Promise<{
     deviceUID: string;
-  };
+  }>;
 }
 
-export default async function DevicePage({ params }: DevicePageProps) {
+export default async function DevicePage(props: DevicePageProps) {
+  const params = await props.params;
   const { deviceUID } = params;
   const decodedDeviceUID = decodeURIComponent(deviceUID);
   const device = await fetchDevice(decodeURIComponent(decodedDeviceUID));

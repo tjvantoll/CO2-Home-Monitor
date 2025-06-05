@@ -1,29 +1,27 @@
 {
-  "req":"hub.set",
-  "product":"YOUR_PRODUCT_UID_HERE",
-  "mode":"periodic",
+  "req": "hub.set",
+  "product": "YOUR_PRODUCT_UID_HERE",
+  "mode": "periodic",
   "outbound": 60,
   "inbound": 1440
-  // "voutbound":"usb:15;high:60;normal:360;low:1440;dead:0",
-  // "vinbound":"usb:60;high:1440;normal:1440;low:1440;dead:0"
 }
 
 {
-  "req":"note.template",
-  "file":"data.qo",
-  "port":1,
-  "format":"compact",
-  "body":{
-    "co2":12,
-    "temp":14.1,
-    "humidity":14.1,
-    "_time":14,
-    "voltage":14.1
+  "req": "note.template",
+  "file": "data.qo",
+  "port": 1,
+  "format": "compact",
+  "body": {
+    "co2": 12,
+    "temp": 14.1,
+    "humidity": 14.1,
+    "_time": 14,
+    "voltage": 14.1
   }
 }
 
+# Use "mode":"lic" for outdoor devices
 {
-  "req":"card.voltage",
-  "mode":"lipo"
-  // "mode":"lic"
+  "req": "card.voltage",
+  "mode": "lipo"
 }

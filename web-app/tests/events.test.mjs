@@ -21,28 +21,31 @@ function load(file, fetch) {
   return compiled.exports;
 }
 
-test('default request fetches only 24h, paginates, and trims metadata', async () => {
+test('default request fetches only 24h in one call and trims metadata', async () => {
   const calls = [];
   const { getEvents } = load('app/utils/notehub.ts', async (url, options) => {
     const params = new URL(url).searchParams;
     calls.push({ params, options });
     return { ok: true, json: async () => ({
       events: [{ when: 123, body: { co2: 500 }, device: 'test', best_id: 'Office', secretMetadata: 'discard' }],
-      has_more: params.get('pageNum') === '1',
+      has_more: true,
     }) };
   });
   const events = await getEvents();
-  assert.equal(calls.length, 2);
+  assert.equal(calls.length, 1);
   const first = calls[0].params;
   assert.equal(Number(first.get('endDate')) - Number(first.get('startDate')), 86400);
   assert.equal(first.get('dateType'), 'captured');
   assert.equal(first.get('files'), 'data.qo');
-  assert.equal(first.get('selectFields'), 'when,body,device,best_id');
-  assert.equal(calls[1].params.get('pageNum'), '2');
-  assert.equal(first.get('endDate'), calls[1].params.get('endDate'));
+  // Selecting the body container upstream strips its nested metric fields.
+  assert.equal(first.has('selectFields'), false);
+  assert.equal(first.has('pageNum'), false);
+  assert.equal(first.get('pageSize'), '5000');
+  assert.equal(first.get('sortOrder'), 'desc');
   assert.equal(calls[0].options.next.revalidate, 60);
-  assert.equal(events.length, 2);
+  assert.equal(events.length, 1);
   assert.equal(events[0].secretMetadata, undefined);
+  assert.equal(events[0].body.co2, 500);
 });
 
 test('month request covers the full selected window', async () => {
@@ -58,13 +61,6 @@ test('month request covers the full selected window', async () => {
 test('upstream failures are errors rather than empty charts', async () => {
   const { getEvents } = load('app/utils/notehub.ts', async () => ({ ok: false, status: 503 }));
   await assert.rejects(getEvents(), /503/);
-});
-
-test('an empty page with has_more fails instead of looping forever', async () => {
-  const { getEvents } = load('app/utils/notehub.ts', async () => ({
-    ok: true, json: async () => ({ events: [], has_more: true }),
-  }));
-  await assert.rejects(getEvents(), /Invalid Notehub/);
 });
 
 test('request cancellation is propagated upstream', async () => {

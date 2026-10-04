@@ -18,7 +18,7 @@ Configure these server-side variables in `.env`:
 - `NOTEHUB_PROJECT_UID`: the Notehub project UID.
 - `NOTEHUB_PERSONAL_ACCESS_TOKEN`: the personal access token used by the dashboard.
 
-The page renders a static dashboard shell immediately. Charts and events load in the browser in parallel. `/api/events?range=24h` fetches only the selected captured-time window (also supports `3d`, `7d`, `14d`, and `30d`), follows Notehub pagination, and returns only chart fields. Upstream responses and successful API responses are cached for 60 seconds; the time window is rounded to the minute. Switching back to a recently loaded range also reuses a 60-second browser memory cache. Failed requests show a retry button instead of appearing as empty data.
+The page renders a static dashboard shell immediately. Charts and events load in the browser in parallel. `/api/events?range=24h` fetches only the selected captured-time window (also supports `3d`, `7d`, `14d`, and `30d`), makes one Notehub request for up to 5,000 of the latest events in that window, and returns only chart fields. There is no pagination. Upstream responses and successful API responses are cached for 60 seconds; the time window is rounded to the minute. Switching back to a recently loaded range also reuses a 60-second browser memory cache. Failed requests show a retry button instead of appearing as empty data.
 
 Keep real credentials out of Git. The `.env` file is ignored.
 

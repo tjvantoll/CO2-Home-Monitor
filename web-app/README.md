@@ -34,6 +34,6 @@ The repository-root `netlify.toml` sets:
 - Publish directory: `.next` (relative to `web-app`)
 - Node.js version: `22`
 
-Netlify automatically installs its Next.js runtime to support server rendering and API routes. Keep the Notehub environment variables configured in Netlify for the production site; local `.env` files are not deployed from Git. The dashboard needs `NOTEHUB_PROJECT_UID` and `NOTEHUB_PERSONAL_ACCESS_TOKEN` available to Netlify Functions.
+The configuration explicitly enables Netlify’s Next.js adapter to support server rendering and API routes from this subdirectory. Keep the Notehub environment variables configured in Netlify for the production site; local `.env` files are not deployed from Git. The dashboard needs `NOTEHUB_PROJECT_UID` and `NOTEHUB_PERSONAL_ACCESS_TOKEN` available to Netlify Functions.
 
 Push changes to this repository's `main` branch to deploy. Firmware and configuration scripts live outside this folder.

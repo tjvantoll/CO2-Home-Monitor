@@ -1,52 +1,22 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+import { getEvents } from "../../utils/notehub";
+import { isTimeRange } from "../../utils/timeRanges";
 
-async function getNotehubToken() {
-  const response = await fetch("https://notehub.io/oauth2/token", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-    },
-    body: new URLSearchParams({
-      grant_type: "client_credentials",
-      client_id: process.env.NOTEHUB_CLIENT_ID!,
-      client_secret: process.env.NOTEHUB_CLIENT_SECRET!,
-    }),
-  });
-
-  const data = await response.json();
-  return data.access_token;
-}
-
-export async function GET() {
+export async function GET(request: NextRequest) {
+  const range = request.nextUrl.searchParams.get("range") ?? "24h";
+  if (!isTimeRange(range)) {
+    return NextResponse.json({ error: "Invalid time range" }, { status: 400 });
+  }
   try {
-    const token = await getNotehubToken();
-    const projectUID = process.env.NOTEHUB_PROJECT_UID;
-
-    const response = await fetch(
-      `https://api.notefile.net/v1/projects/${projectUID}/events?sortOrder=desc&sortBy=captured`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-
-    const data = await response.json();
-
-    // Log the first event to see its structure
-    if (data.events && data.events.length > 0) {
-      console.log(
-        "API Response - First event:",
-        JSON.stringify(data.events[0], null, 2)
-      );
-    }
-
-    return NextResponse.json(data);
+    const events = await getEvents(range, request.signal);
+    return NextResponse.json({ events }, {
+      headers: { "Cache-Control": "public, max-age=0, s-maxage=60" },
+    });
   } catch (error) {
-    console.error("Error fetching events:", error);
+    console.error("Events request failed:", error instanceof Error ? error.message : "Unknown error");
     return NextResponse.json(
-      { error: "Failed to fetch events" },
-      { status: 500 }
+      { error: "Unable to load sensor data. Please try again." },
+      { status: 502, headers: { "Cache-Control": "no-store" } }
     );
   }
 }

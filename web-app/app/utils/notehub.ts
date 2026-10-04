@@ -1,54 +1,54 @@
-import { NotehubEvent } from "../types/notehub";
+import type { NotehubEvent, NotehubEventsResponse } from "../types/notehub";
+import { TIME_RANGES, type TimeRange } from "./timeRanges";
 
-async function getAccessToken(): Promise<string> {
+export async function getEvents(
+  range: TimeRange = "24h",
+  signal?: AbortSignal
+): Promise<NotehubEvent[]> {
   const token = process.env.NOTEHUB_PERSONAL_ACCESS_TOKEN;
-
-  if (!token) {
-    throw new Error(
-      "Missing NOTEHUB_PERSONAL_ACCESS_TOKEN in environment variables"
-    );
+  const projectUID = process.env.NOTEHUB_PROJECT_UID;
+  if (!token || !projectUID) {
+    throw new Error("Missing Notehub configuration");
   }
 
-  return token;
-}
+  // Keep the window fixed across pages, and share upstream cache keys for a minute.
+  const endDate = Math.floor(Date.now() / 60_000) * 60;
+  const startDate = endDate - TIME_RANGES[range];
+  const events: NotehubEvent[] = [];
+  const deadline = AbortSignal.timeout(25_000);
+  const requestSignal = signal ? AbortSignal.any([signal, deadline]) : deadline;
 
-export async function getEvents(): Promise<NotehubEvent[]> {
-  try {
-    const accessToken = await getAccessToken();
-    const projectUID = process.env.NOTEHUB_PROJECT_UID;
-
-    if (!projectUID) {
-      throw new Error("Missing Notehub project UID in environment variables");
-    }
-
+  for (let pageNum = 1; ; pageNum++) {
     const params = new URLSearchParams({
-      sortOrder: "desc",
+      sortOrder: "asc",
       sortBy: "captured",
-      pageSize: "5000",
+      dateType: "captured",
+      startDate: String(startDate),
+      endDate: String(endDate),
+      pageSize: "1000",
+      pageNum: String(pageNum),
       files: "data.qo",
+      selectFields: "when,body,device,best_id",
     });
-
     const response = await fetch(
       `https://api.notefile.net/v1/projects/${projectUID}/events?${params}`,
       {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-        cache: "no-store", // Disable caching to always get fresh data
+        headers: { Authorization: `Bearer ${token}` },
+        next: { revalidate: 60 },
+        signal: requestSignal,
       }
     );
-
     if (!response.ok) {
-      const errorText = await response.text();
-      console.error("Events request failed:", errorText);
-      throw new Error("Failed to fetch events");
+      throw new Error(`Notehub events request failed (${response.status})`);
     }
-
-    const data = await response.json();
-    console.log(`Retrieved ${data.events?.length || 0} events`);
-    return data.events || [];
-  } catch (error) {
-    console.error("Error fetching events:", error);
-    return [];
+    const data: NotehubEventsResponse = await response.json();
+    if (!Array.isArray(data.events) || (data.has_more && !data.events.length)) {
+      throw new Error("Invalid Notehub events response");
+    }
+    // Only send chart fields to the browser, even if the upstream API adds metadata.
+    events.push(...data.events.map(({ when, body, device, best_id }) => ({
+      when, body, device, best_id,
+    })));
+    if (!data.has_more) return events;
   }
 }

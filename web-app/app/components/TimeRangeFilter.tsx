@@ -1,4 +1,4 @@
-type TimeRange = "24h" | "3d" | "7d" | "14d" | "30d";
+import type { TimeRange } from "../utils/timeRanges";
 
 interface TimeRangeFilterProps {
   selectedRange: TimeRange;
@@ -18,13 +18,14 @@ export default function TimeRangeFilter({
   onRangeChange,
 }: TimeRangeFilterProps) {
   return (
-    <div className="flex items-center gap-2 mb-6">
+    <div className="flex flex-wrap items-center gap-2 mb-6">
       <span className="text-sm font-medium text-gray-700">Time Range:</span>
-      <div className="flex gap-2">
+      <div className="flex flex-wrap gap-2">
         {ranges.map(({ value, label }) => (
           <button
             key={value}
-            onClick={() => onRangeChange(value as TimeRange)}
+            onClick={() => onRangeChange(value)}
+            aria-pressed={selectedRange === value}
             className={`px-3 py-1.5 text-sm font-medium rounded-full transition-colors
               ${
                 selectedRange === value

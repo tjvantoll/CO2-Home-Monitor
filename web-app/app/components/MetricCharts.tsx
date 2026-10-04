@@ -16,8 +16,7 @@ import "chartjs-adapter-date-fns";
 import { Line } from "react-chartjs-2";
 import { NotehubEvent } from "../types/notehub";
 import { processEventsForCharts } from "../utils/chartHelpers";
-import TimeRangeFilter, { TimeRange } from "./TimeRangeFilter";
-import { useState, useMemo } from "react";
+import { useMemo } from "react";
 
 // Register Chart.js components
 ChartJS.register(
@@ -113,35 +112,8 @@ function formatMetricName(metric: string): string {
     .join(" ");
 }
 
-function filterEventsByTimeRange(
-  events: NotehubEvent[],
-  range: TimeRange
-): NotehubEvent[] {
-  const now = Date.now() / 1000; // Convert to UNIX timestamp
-  const ranges = {
-    "24h": 24 * 60 * 60,
-    "3d": 3 * 24 * 60 * 60,
-    "7d": 7 * 24 * 60 * 60,
-    "14d": 14 * 24 * 60 * 60,
-    "30d": 30 * 24 * 60 * 60,
-  };
-
-  const cutoff = now - ranges[range];
-  return events.filter((event) => event.when >= cutoff);
-}
-
 export default function MetricCharts({ events }: { events: NotehubEvent[] }) {
-  const [timeRange, setTimeRange] = useState<TimeRange>("24h");
-
-  const filteredEvents = useMemo(
-    () => filterEventsByTimeRange(events, timeRange),
-    [events, timeRange]
-  );
-
-  const chartData = useMemo(
-    () => processEventsForCharts(filteredEvents),
-    [filteredEvents]
-  );
+  const chartData = useMemo(() => processEventsForCharts(events), [events]);
 
   if (Object.keys(chartData).length === 0) {
     return (
@@ -153,7 +125,6 @@ export default function MetricCharts({ events }: { events: NotehubEvent[] }) {
 
   return (
     <div className="space-y-6">
-      <TimeRangeFilter selectedRange={timeRange} onRangeChange={setTimeRange} />
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {Object.entries(chartData).map(([metric, data]) => (
           <div key={metric} className="bg-white rounded-lg p-6 shadow-lg">

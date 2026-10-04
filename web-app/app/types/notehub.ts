@@ -1,7 +1,5 @@
 export interface NotehubEvent {
-  uid: string;
   when: number;
-  file: string;
   body: {
     co2?: number;
     temp?: number;
@@ -10,14 +8,7 @@ export interface NotehubEvent {
     [key: string]: number | undefined;
   };
   device: string;
-  sn: string;
-  best_id: string;
-  transport?: string;
-  product?: string;
-  app?: string;
-  received?: number;
-  req?: string;
-  fleets?: string[];
+  best_id?: string;
 }
 
 export interface NotehubEventsResponse {

@@ -1,9 +1,6 @@
-import MetricCharts from "./components/MetricCharts";
-import { getEvents } from "./utils/notehub";
+import EventList from "./components/EventList";
 
-export default async function Home() {
-  const events = await getEvents();
-
+export default function Home() {
   return (
     <div className="space-y-6">
       <div>
@@ -12,7 +9,7 @@ export default async function Home() {
           Real-time environmental metrics from your sensors
         </p>
       </div>
-      <MetricCharts events={events} />
+      <EventList />
     </div>
   );
 }

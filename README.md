@@ -2,7 +2,7 @@
 
 This repository contains the firmware and web application source code for building your own home CO2 monitor. You can read the [full instructions for assembling this project on Hackster](https://www.hackster.io/tjvantoll/monitoring-home-co2-levels-with-lorawan-0b53a3).
 
-You can also see a live version of the web app at <https://co2-home-monitor.netlify.app>.
+You can also see a live version of the web app at <https://co2monitor.netlify.app>.
 
 ## Firmware
 
@@ -10,17 +10,7 @@ The firmware for this project is written for Arduino using [PlatformIO](https://
 
 ## Web App
 
-This project’s web application is written using [Next.js](https://nextjs.org/). The [web application’s README](/web-app/) has instructions for how to run the project. Note that you will need to create a local `.env` file with the following two values for the project to run successfully.
-
-* `PROJECT_UID`: The [ProjectUID of your Notehub project](https://dev.blues.io/api-reference/glossary/#projectuid).
-* `NOTEHUB_API_KEY`: A valid [Notehub API Session Token](https://dev.blues.io/api-reference/notehub-api/api-introduction/#authentication-with-session-tokens-deprecated).
-
-Your `web-app/.env` file should look something like this after configured.
-
-```plaintext
-PROJECT_UID=app:123-456-789
-NOTEHUB_API_KEY=abc123def456ghi789
-```
+This project’s canonical web application lives in `web-app` and is written using [Next.js](https://nextjs.org/). See the [web application’s README](./web-app/README.md) for local setup and Netlify deployment instructions.
 
 ## Notecard Config Script
 

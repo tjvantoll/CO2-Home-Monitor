@@ -1,36 +1,39 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# CO2 Monitor web app
 
-## Getting Started
+The canonical dashboard for this project lives in this folder. It displays environmental metrics from Notehub using Next.js and Chart.js.
 
-First, run the development server:
+## Local development
 
-```bash
+Use Node.js 22 or newer, then run:
+
+```sh
+cd web-app
+npm ci
+cp .env.example .env
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Configure these server-side variables in `.env`:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- `NOTEHUB_PROJECT_UID`: the Notehub project UID.
+- `NOTEHUB_PERSONAL_ACCESS_TOKEN`: the personal access token used by the dashboard.
+- `NOTEHUB_CLIENT_ID` and `NOTEHUB_CLIENT_SECRET`: required if using the `/api/events` route, which authenticates with OAuth client credentials.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Keep real credentials out of Git. The `.env` file is ignored.
 
-## Learn More
+Open <http://localhost:3000>. Run `npm run lint` to lint and `npm run build` to verify the production build.
 
-To learn more about Next.js, take a look at the following resources:
+## Netlify deployment
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+The production site is <https://co2monitor.netlify.app/>. Connect that existing site to `tjvantoll/CO2-Home-Monitor`, using the `main` production branch.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+The repository-root `netlify.toml` sets:
 
-## Deploy on Vercel
+- Base directory: `web-app`
+- Build command: `npm run build`
+- Publish directory: `.next` (relative to `web-app`)
+- Node.js version: `22`
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Netlify automatically installs its Next.js runtime to support server rendering and API routes. Keep the Notehub environment variables configured in Netlify for the production site; local `.env` files are not deployed from Git. The dashboard needs `NOTEHUB_PROJECT_UID` and `NOTEHUB_PERSONAL_ACCESS_TOKEN` available to Netlify Functions.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Push changes to this repository's `main` branch to deploy. Firmware and configuration scripts live outside this folder.
